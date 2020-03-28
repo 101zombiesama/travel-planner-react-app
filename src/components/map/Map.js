@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import ReactMapGL from "react-map-gl"
 
+
+
 export default function Map() {
     const [viewport, setViewport] = useState({
       latitude: 43.296482,
       longitude: 5.369780,
-      width: "100vw",
-      height: "100vh",
+      width: '100%',
+      height: '500px',
       zoom: 14
     });
   

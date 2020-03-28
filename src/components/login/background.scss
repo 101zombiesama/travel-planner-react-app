@@ -4,14 +4,17 @@ $shooting-time: 10000ms;
 //   position: absolute;
 //   background: blue;
 // }
-body {
+.bg {
+  position: absolute;
   background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
   height: 100vh;
+  width: 100vw;
   overflow: hidden;
   display: flex;
   font-family: "Anton", sans-serif;
   justify-content: center;
   align-items: center;
+  z-index: -200;
 }
 .night {
   position: absolute;
