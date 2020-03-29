@@ -1,5 +1,7 @@
-import React from 'react';
-import './dashboard.css'
+import React, { useContext } from 'react';
+import './dashboard.css';
+import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeContext } from '../../contexts/ThemeContext';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -58,8 +60,10 @@ const useStyles = makeStyles(theme => ({
 
 export default function Dashboard() {
     const classes = useStyles();
+    const { isLightTheme, darkTheme, lightTheme } = useContext(ThemeContext);
 
     return ( 
+        <ThemeProvider theme={isLightTheme ? lightTheme : darkTheme}>
         <div className={classes.root}>
             <CssBaseline />
             <Drawer
@@ -117,5 +121,6 @@ export default function Dashboard() {
                 <Map/>
             </main>
         </div>
+        </ThemeProvider>
     );
 }

@@ -1,5 +1,8 @@
-import React from 'react';
-import Background from './Background';
+import React, { useContext } from 'react';
+import BackgroundDark from './BackgroundDark';
+import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeContext } from '../../contexts/ThemeContext';
+import BackgroundLight from './BackgroundLight';
 import { Container } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
@@ -50,10 +53,12 @@ const useStyles = makeStyles(theme => ({
 const Login = () => {
 
     const classes = useStyles();
+    const {isLightTheme, darkTheme, lightTheme} = useContext(ThemeContext);
 
     return (
+        <ThemeProvider theme={isLightTheme ? lightTheme : darkTheme}>
         <div>
-        <Background/>
+        { isLightTheme ? <BackgroundLight /> : <BackgroundDark /> }
         <div className={classes.fullbody}>
         <CssBaseline />
             <div className={classes.center}>
@@ -133,6 +138,7 @@ const Login = () => {
             </div>
         </div>
         </div>
+        </ThemeProvider>
      );
 }
  

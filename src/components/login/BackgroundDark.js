@@ -1,7 +1,7 @@
 import React from 'react';
-import './background.scss';
+import './backgroundDark.scss';
 
-const Background = () => {
+const BackgroundDark = () => {
 
     const stars = []
 
@@ -18,4 +18,4 @@ const Background = () => {
      );
 }
  
-export default Background;
+export default BackgroundDark;
