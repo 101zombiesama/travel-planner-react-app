@@ -1,7 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
+import Fade from 'react-reveal/Fade';
 import BackgroundDark from './BackgroundDark';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { ThemeContext } from '../../contexts/ThemeContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import BackgroundLight from './BackgroundLight';
 import { Container } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -16,6 +18,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
+
 
 const useStyles = makeStyles(theme => ({
     fullbody: {
@@ -50,12 +53,24 @@ const useStyles = makeStyles(theme => ({
       },
   }));
 
+
 const Login = () => {
 
     const classes = useStyles();
     const {isLightTheme, darkTheme, lightTheme} = useContext(ThemeContext);
+    const { logIn } = useContext(AuthContext);
+
+    // state
+    const [ username, setUsername ] = useState("");
+    const [ password, setPassword ] = useState("");
+
+    // useEffect hooks
+
+    // private handlers
+    
 
     return (
+        <Fade>
         <ThemeProvider theme={isLightTheme ? lightTheme : darkTheme}>
         <div>
         { isLightTheme ? <BackgroundLight /> : <BackgroundDark /> }
@@ -73,6 +88,7 @@ const Login = () => {
                         
                         <form className={classes.form} noValidate>
                             <TextField
+                            onChange={(e) => setUsername(e.target.value)}
                             size='small'
                             variant="outlined"
                             margin="normal"
@@ -85,6 +101,7 @@ const Login = () => {
                             autoFocus
                             />
                             <TextField
+                            onChange={(e) => setPassword(e.target.value)}
                             size='small'
                             variant="outlined"
                             margin="normal"
@@ -101,7 +118,8 @@ const Login = () => {
                             label="Remember me"
                             />
                             <Button
-                            type="submit"
+                            onClick={(e) => { logIn({ username, password }); }}
+                            
                             fullWidth
                             variant="contained"
                             color="primary"
@@ -121,16 +139,16 @@ const Login = () => {
                             </Button>
                             
                             <Grid container>
-                            <Grid item xs>
-                                <Link style={ {fontSize: '14px'} } href="#" variant="body2">
-                                    Forgot password?
-                                </Link>
-                            </Grid>
-                            <Grid item>
-                                <Link style={ {fontSize: '14px'} } href="#" variant="body2">
-                                    {"Sign up"}
-                                </Link>
-                            </Grid>
+                                <Grid item xs>
+                                    <Link style={ {fontSize: '14px'} } href="#" variant="body2">
+                                        Forgot password?
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <Link style={ {fontSize: '14px'} } href="#" variant="body2">
+                                        {"Sign up"}
+                                    </Link>
+                                </Grid>
                             </Grid>
                         </form>
                     </Container>
@@ -139,6 +157,7 @@ const Login = () => {
         </div>
         </div>
         </ThemeProvider>
+        </Fade>
      );
 }
  

@@ -6,7 +6,7 @@ const BackgroundDark = () => {
     const stars = []
 
     for (let i = 0; i < 20; i++) {
-        stars.push(<div className="shooting_star"></div>)
+        stars.push(<div key={i} className="shooting_star"></div>)
     }
 
     return (
