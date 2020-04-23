@@ -5,3 +5,12 @@
     
 }
 
+.red-marker {
+    background-image: url('../../assets/img/icons/red-marker.png');
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+

@@ -52,7 +52,7 @@ const ThemeContextProvider = ({ children }) => {
         const dateString = result.datetime;
         const date = new Date(dateString);
         const time = date.getHours();
-        if (time > 18) {
+        if (time > 18 || time < 7) {
             setIsLightTheme(false);
         } else {
             setIsLightTheme(true);

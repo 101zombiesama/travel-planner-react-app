@@ -76,7 +76,7 @@ export default function Layout() {
 
     }
     const openMessagesHandler = () => {
-
+        console.log(selectedPlace);
     }
     const saveJourneyHandler = () => {
         saveJourney();
@@ -340,7 +340,7 @@ export default function Layout() {
                                                                     searchresults.length === 0 ?
                                                                     <Box className={classes.center}>No Results</Box> :
                                                                     searchresults.map((result, index) => (
-                                                                        <ListItem onClick={e => updateSelectedPlace(result)} style={{ borderRadius: '10px' }} key={index} button>
+                                                                        <ListItem onClick={e => updateSelectedPlace(result, 'mapbox')} style={{ borderRadius: '10px' }} key={index} button>
                                                                             {result.place_name}
                                                                         </ListItem>
                                                                     ))
@@ -445,7 +445,7 @@ export default function Layout() {
                                 <Grid className={classes.rightContainer} item xs={3}>
                                     <Box style={{ borderBottom: `2px solid ${theme.palette.background.shadeA}` }} className={classes.topGutter}>
                                         <Box style={{ padding: '10px' }} className={classes.center}>
-                                            <Typography noWrap={true} variant='h5' > {selectedPlace.text} </Typography>
+                                            <Typography noWrap={true} variant='h5' > {selectedPlace.name} </Typography>
                                         </Box>
                                     </Box>
                                     <Box style={{ height: '100%', width: '100%', background: '' }}>
