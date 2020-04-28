@@ -27,8 +27,8 @@ const getOSMLabels = async (map) => {
     const lat_min = bounds._sw.lat - buffer;
     const lat_max = bounds._ne.lat + buffer;
 
-    const body = `[out:json];node[tourism](${lat_min},${lon_min},${lat_max},${lon_max});out;`;
-    const res = await fetch(`http://localhost:5000/api/places/osmdata?data=${body}`);
+    const body = `[out:json];node[wikidata](${lat_min},${lon_min},${lat_max},${lon_max});out;`;
+    const res = await fetch(`http://localhost:5000/api/places/osmdata?data=${body}`, { credentials: 'include' });
     const result = await res.json();
     return  result
 

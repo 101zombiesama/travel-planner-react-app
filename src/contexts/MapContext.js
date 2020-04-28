@@ -26,19 +26,22 @@ const mbPlacetoPlace = (mbplace) => {
             zoom = 13;
             break;
     }
+    var detail_id = null;
+    if (mbplace.properties.wikidata) detail_id = mbplace.properties.wikidata;
     const place = {
         zoom: zoom,
         name: mbplace.text,
         center: mbplace.center,
         source: 'mapbox',
-        detail_id: mbplace.properties.wikidata || null,
-        source_id: mbplace.id || null,
+        detail_id,
+        source_id: mbplace.id,
     }
 
     return place;
 }
 
 const osmPlaceToPlace = (osmPlace) => {
+    console.log(osmPlace);
     var zoom;
     const type = osmPlace.properties.id.split('/')[0];
     switch (type) {
@@ -54,13 +57,17 @@ const osmPlaceToPlace = (osmPlace) => {
             break;
     }
 
+    var name = null;
+    if (osmPlace.properties['name:en']) name = osmPlace.properties['name:en'];
+    else name = osmPlace.properties.name;
+
     const place = {
         zoom: zoom,
-        name: osmPlace.properties.name,
+        name,
         center: osmPlace.geometry.coordinates,
         source: 'osm',
-        detail_id: osmPlace.properties.id || null,
-        source_id: osmPlace.properties.id || null,
+        detail_id: osmPlace.properties.id,
+        source_id: osmPlace.properties.id,
     }
 
     return place;
@@ -82,8 +89,12 @@ export default function MapContextProvider({ children }) {
         source_id: null
     });
 
-    // private handlers
-    const updateSelectedPlace = (place, source) => {
+    const [isDetailsLoading, setIsDetailsLoading] = useState(true);
+    const [placeDetails, setPlaceDetails] = useState(null);
+    const [placeImages, setPlaceImages] = useState([]);
+    const [isImageLoading, setIsImageLoading] = useState(true);
+
+    const updateSelectedPlace = async (place, source) => {
         var convertedPlace;
         if (source === 'osm') {
             convertedPlace = osmPlaceToPlace(place);
@@ -91,14 +102,75 @@ export default function MapContextProvider({ children }) {
         if (source === 'mapbox') {
             convertedPlace = mbPlacetoPlace(place);
         }
-        // setSelectedPlace(prevPlace => Object.assign(prevPlace, convertedPlace));
         setSelectedPlace(convertedPlace);
-    }
-    
+
+        // fetch place details if source is osm
+        if (convertedPlace.source === 'osm') {
+            
+            setIsDetailsLoading(true);
+            const res = await fetch(`http://localhost:5000/api/places/details/osm?source_id=${convertedPlace.source_id}&detail_id=${convertedPlace.detail_id}`, {
+                credentials: 'include'
+            });
+            
+            const details = await res.json();
+            setPlaceDetails(details);
+            setIsDetailsLoading(false);
+            console.log("details: " ,details);
+            
+            if(details.images.length > 0) {
+                setPlaceImages(details.images);
+                setIsImageLoading(false);
+            }
+            else {
+                // fetch images
+                setIsImageLoading(true);
+                const imgres = await fetch(`http://localhost:5000/api/places/images?detail_id=${details._id}`, {
+                    credentials: 'include'
+                });
+                const imgresult = await imgres.json();
+                setPlaceImages(imgresult);
+                setIsImageLoading(false);
+                
+            }
+        }
+
+        // fetch place details if source is mapbox
+        if (convertedPlace.source === 'mapbox') {
+
+            const place = JSON.stringify(convertedPlace);
+
+            setIsDetailsLoading(true);
+            const res = await fetch(`http://localhost:5000/api/places/details/mapbox?source_id=${convertedPlace.source_id}&detail_id=${convertedPlace.detail_id}&convertedPlace=${place}`, {
+                credentials: 'include'
+            });
+            
+            const details = await res.json();
+            setPlaceDetails(details);
+            setIsDetailsLoading(false);
+            console.log("details: " ,details);
+            
+            if(details.images.length > 0) {
+                setPlaceImages(details.images);
+                setIsImageLoading(false);
+            }
+            else {
+                // fetch images
+                setIsImageLoading(true);
+                const imgres = await fetch(`http://localhost:5000/api/places/images?detail_id=${details._id}`, {
+                    credentials: 'include'
+                });
+                const imgresult = await imgres.json();
+                setPlaceImages(imgresult);
+                setIsImageLoading(false);
+            }
+
+        }
+
+    }    
 
 
     return (
-        <MapContext.Provider value={{ selectedPlace, updateSelectedPlace }}>
+        <MapContext.Provider value={{ selectedPlace, updateSelectedPlace, isDetailsLoading, placeDetails, placeImages, isImageLoading }}>
             {children}
         </MapContext.Provider>
     );

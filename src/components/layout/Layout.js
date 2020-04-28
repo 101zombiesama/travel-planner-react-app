@@ -3,12 +3,16 @@ import Fade from 'react-reveal/Fade';
 // contexts
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { AuthContext } from '../../contexts/AuthContext';
+import { MapContext } from '../../contexts/MapContext';
 import { JourneyContext } from '../../contexts/JourneyContext';
 
 // components
 import CreateJourney from '../createJourney';
 import EditJourney from '../editJourney';
 import Mapbox from '../mapbox';
+import Details from  '../details';
+import DetailsLoader from  '../details/DetailsLoader';
+import RecommendedPlacesLoader from  '../recommendedPlaces/RecommendedPlacesLoader';
 
 // material ui
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -25,6 +29,7 @@ import Switch from '@material-ui/core/Switch';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
+import Divider from '@material-ui/core/Divider';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import DateFnsUtils from '@date-io/date-fns';
 import {
@@ -46,7 +51,6 @@ import SaveIcon from '@material-ui/icons/Save';
 
 import { dark } from '@material-ui/core/styles/createPalette';
 import { Typography } from '@material-ui/core';
-import { MapContext } from '../../contexts/MapContext';
 
 export default function Layout() {
 
@@ -54,7 +58,7 @@ export default function Layout() {
     const { isLightTheme, darkTheme, lightTheme, darkThemeSwitch } = useContext(ThemeContext);
     const { logOut, user } = useContext(AuthContext);
     const { mode, saveJourney } = useContext(JourneyContext);
-    const { mapCenter, selectedPlace, updateSelectedPlace } = useContext(MapContext);
+    const { mapCenter, selectedPlace, updateSelectedPlace, isDetailsLoading } = useContext(MapContext);
 
     const theme = isLightTheme ? lightTheme : darkTheme;
 
@@ -82,9 +86,9 @@ export default function Layout() {
         saveJourney();
     }
     const fetchSearchResults = async (query) => {
-        const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`);
+        const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?language=en&access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`);
         const result = await res.json();
-        if (result.features.length > 0) {
+        if (result.features && result.features.length > 0) {
             setSearchResults([...result.features]);
         }
 
@@ -186,6 +190,7 @@ export default function Layout() {
             overflow: 'auto'
         },
         rightContainer: {
+            overflow: 'auto',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -239,8 +244,7 @@ export default function Layout() {
             borderRadius: '20px',
         },
         placeDetails: {
-            height: '100%',
-            width: '100%',
+            // margin: '7px'
             // borderRadius: '20px 0px 0px 20px',
         },
         mapbox: {
@@ -406,12 +410,12 @@ export default function Layout() {
 
                                             <Grid className={classes.recommendedPlaces} item xs={12}>
                                                 <Paper className={classes.paper}>
-                                                    Recommended Places
+                                                    <RecommendedPlacesLoader/>
                                                 </Paper>
                                             </Grid>
                                             <Grid className={classes.recommendedPlaces} item xs={12}>
                                                 <Paper className={classes.paper}>
-                                                    Explore New Places
+                                                    <RecommendedPlacesLoader/>
                                                 </Paper>
                                             </Grid>
 
@@ -443,13 +447,23 @@ export default function Layout() {
 
                                 </Grid>
                                 <Grid className={classes.rightContainer} item xs={3}>
-                                    <Box style={{ borderBottom: `2px solid ${theme.palette.background.shadeA}` }} className={classes.topGutter}>
-                                        <Box style={{ padding: '10px' }} className={classes.center}>
-                                            <Typography noWrap={true} variant='h5' > {selectedPlace.name} </Typography>
+                                    <Box style={{ borderBottom: `0px solid ${theme.palette.background.shadeA}` }} className={classes.topGutter}>
+                                        <Box style={{ padding: '15px' }} className={classes.center}>
+                                            <Typography style={{textAlign:'center', margin:'10px'}} variant='h5' > {selectedPlace.name} </Typography>
                                         </Box>
+                                        <Divider />
                                     </Box>
                                     <Box style={{ height: '100%', width: '100%', background: '' }}>
-                                        
+                                        <Box className={classes.placeDetails}>
+                                            {
+                                                isDetailsLoading ?
+                                                    <Box style={{ margin:'5px' }} >
+                                                        <DetailsLoader/>
+                                                    </Box>
+                                                :
+                                                    <Details/>
+                                            }
+                                        </Box>
                                     </Box>
                                 </Grid>
 
